@@ -1,0 +1,35 @@
+# 2024-12-14 14:03:03 by RouterOS 7.16.2
+# software id = 
+#
+/interface bridge
+add admin-mac=02:4C:F0:99:FB:DA auto-mac=no name=BR-VLAN40-ACCESS
+add admin-mac=02:8C:DF:1C:DE:62 auto-mac=no name=BR-VLAN50-ACCESS
+/interface ethernet
+set [ find default-name=ether1 ] comment="RB01 > RB02" name=ether1-rb01
+set [ find default-name=ether2 ] name=ether2-vpc-vlan40
+set [ find default-name=ether3 ] name=ether3-vpc-vlan50
+set [ find default-name=ether4 ] disabled=yes
+/interface vlan
+add interface=ether1-rb01 name=VLAN_40 vlan-id=40
+add interface=ether1-rb01 name=VLAN_50 vlan-id=50
+/port
+set 0 name=serial0
+/interface bridge port
+add bridge=BR-VLAN40-ACCESS interface=VLAN_40
+add bridge=BR-VLAN40-ACCESS interface=ether2-vpc-vlan40
+add bridge=BR-VLAN50-ACCESS interface=VLAN_50
+add bridge=BR-VLAN50-ACCESS interface=ether3-vpc-vlan50
+/ip address
+add address=192.168.15.2/24 comment=Gerencial interface=ether1-rb01 network=\
+    192.168.15.0
+/system identity
+set name=RB02
+/system note
+set note="EST\C1 CONFIGURADO DE MODO QUE A BRIDGE CONTENHA A ETHER FISICA E A \
+    VLAN DENTRO DA MESMA BRIDGE. \r\
+    \nDESSA FORMA, O MIKROTIK RETIRA A TAG PARA AS PORTAS FISICAS E DEVOLVE PA\
+    RA VLAN DEIXANDO A VLAN COM TRUNK E AS INTERFACES FISICAS COMO ACCESS.\r\
+    \nN\C3O H\C1 UM FILTRO DE ISOLAMENTO ENTRE AS VLANS DA FORMA QUE EST\C1 CO\
+    NFIGURADO." show-at-cli-login=yes
+/tool romon
+set enabled=yes id=00:00:00:00:00:02

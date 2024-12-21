@@ -1,0 +1,51 @@
+# 2024-12-14 14:03:49 by RouterOS 7.16.2
+# software id = 
+#
+/interface ethernet
+set [ find default-name=ether1 ] name=ether1-net
+set [ find default-name=ether2 ] comment="RB01 > RB02" name=ether2-rb02
+set [ find default-name=ether3 ] disabled=yes
+set [ find default-name=ether4 ] disabled=yes
+/interface vlan
+add interface=ether2-rb02 name=VLAN_40 vlan-id=40
+add interface=ether2-rb02 name=VLAN_50 vlan-id=50
+/ip pool
+add name=dhcp_pool-vlan40 ranges=10.10.40.2-10.10.40.254
+add name=dhcp_pool-vlan50 ranges=10.10.50.2-10.10.50.254
+/ip dhcp-server
+add address-pool=dhcp_pool-vlan40 interface=VLAN_40 lease-time=10m name=\
+    dhcp-vlan40
+add address-pool=dhcp_pool-vlan50 interface=VLAN_50 lease-time=10m name=\
+    dhcp-vlan50
+/port
+set 0 name=serial0
+/ip address
+add address=192.168.15.1/24 comment=Gerencial interface=ether2-rb02 network=\
+    192.168.15.0
+add address=10.10.40.1/24 interface=VLAN_40 network=10.10.40.0
+add address=10.10.50.1/24 interface=VLAN_50 network=10.10.50.0
+/ip dhcp-client
+add interface=ether1-net
+/ip dhcp-server network
+add address=10.10.40.0/24 dns-server=10.10.40.1 gateway=10.10.40.1
+add address=10.10.50.0/24 dns-server=10.10.50.1 gateway=10.10.50.1
+/ip dns
+set allow-remote-requests=yes servers=1.1.1.1
+/ip firewall address-list
+add address=10.10.40.0/24 list=IP-ACESSO-INTERNET
+add address=10.10.50.0/24 list=IP-ACESSO-INTERNET
+/ip firewall nat
+add action=masquerade chain=srcnat src-address-list=IP-ACESSO-INTERNET
+/system identity
+set name=RB01
+/system note
+set note="EST\C1 CONFIGURADO UM DHCP PARA AS DUAS VLANS QUE EST\C3O NA MESMA E\
+    THER PARA TRANSPORTE (LIGANDO A OUTRO MK)\r\
+    \n\r\
+    \nTAMB\C9M TEM UMA CONFIGURA\C7\C3O B\C1SICA PARA NAVEGAR NA INTERNET (MAS\
+    QUERADE)." show-at-cli-login=yes
+/tool romon
+set enabled=yes id=00:00:00:00:00:01
+/tool romon port
+set [ find default=yes ] forbid=yes
+add disabled=no interface=ether2-rb02
