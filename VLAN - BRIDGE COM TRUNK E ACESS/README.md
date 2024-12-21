@@ -6,6 +6,7 @@ Ao conectar uma estação de trabalho no mikrotik 2, ele segmentará a rede entr
 Ao colocar a VLAN na mesma bridge da ether fisica, o mikrotik deixa a porta fisica como ACCESS e deixa a VLAN como TRUNK.
 A configuração presente nos backups e scripts não realizam isolamento entre as VLANs, ou seja, uma estação cnectada em uma VLAN consegue acessar outra estação conectada em outra VLAN.
 
+<img  alt="preview" src="https://raw.githubusercontent.com/sulivansimoes/mikrotik/refs/heads/main/VLAN%20-%20BRIDGE%20COM%20TRUNK%20E%20ACESS/topologia.png">
 
 ## Responsabilidade 
 Esse repositório contém topologias e scripts usados para estudo em ambiente de laboratório. 
